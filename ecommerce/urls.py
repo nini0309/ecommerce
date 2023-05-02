@@ -4,6 +4,7 @@ from ecom import views
 from django.contrib.auth.views import LoginView,LogoutView
 urlpatterns = [
     path('products', views.products_view, name="products"),
+    path('product/', views.product_desc, name="product_desc"),
     path('admin/', admin.site.urls),
     path('',views.home_view,name=''),
     path('afterlogin', views.afterlogin_view,name='afterlogin'),

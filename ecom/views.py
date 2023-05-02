@@ -21,6 +21,10 @@ def home_view(request):
 
 def products_view(request):
     return render(request, 'ecom/products.html')
+
+def product_desc(request):
+    return render(request, 'ecom/product_desc.html')
+
 #for showing login button for admin(by sumit)
 def adminclick_view(request):
     if request.user.is_authenticated:
