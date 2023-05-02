@@ -20,7 +20,14 @@ def home_view(request):
     return render(request,'ecom/index.html',{'products':products,'product_count_in_cart':product_count_in_cart})
 
 def products_view(request):
-    return render(request, 'ecom/products.html')
+    products=models.Product.objects.all()
+    if 'product_ids' in request.COOKIES:
+        product_ids = request.COOKIES['product_ids']
+        counter=product_ids.split('|')
+        product_count_in_cart=len(set(counter))
+    else:
+        product_count_in_cart=0
+    return render(request,'ecom/products.html',{'products':products,'product_count_in_cart':product_count_in_cart})
 
 def product_desc(request):
     return render(request, 'ecom/product_desc.html')
