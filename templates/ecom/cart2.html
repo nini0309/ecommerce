@@ -1,12 +1,12 @@
-{% load static %}
 <!DOCTYPE html>
+{% load static %}
 <html>
     
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width-device-width, initial-scale=1.0">
         <title>All Products - Redstore</title>
-        <link rel="stylesheet" href="{% static "css/style.css" %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
         <!--added a cdn link by searching font awesome4 cdn and getting this link from https://www.bootstrapcdn.com/fontawesome/ this url*/-->
@@ -37,54 +37,85 @@
                     <a href="{% url 'cart' %}"><img src="{%static 'images/cart.png' %}" width="30px" height="30px"></a>
                     <img src="{%static 'images/menu.png' %}" class="menu-icon" onClick="menutoggle()" >
                 </div>
-              
+                
             </div>
+        </div>
     <!--</div>-->
     
         
-        <!------------------------------ Products------------------------------>
-        <div class="small-container">
-            <div class="row row-2">
-                <h2>All Products</h2>
-                <select>
-                    <option>Default sorting</option>
-                    <option>Sort by price</option>
-                    <option>Sort by popularity</option>
-                    <option>Sort by rating</option>
-                    <option>Sort by sale</option>
-                </select>
-            </div>
-            
-            
-            <!--<h2 class="title" >Featured Products</h2>-->
-            <div class="row">
-                {% for p in products %}
-                    <div class="col-4">
-                        <a href="/product"><img src="{% static p.product_image.url %}"></a>
-                        <a href="/product"><h4>{{ p.name }}</h4></a>
-                        <div class="rating">
-                            <i class="fa fa-star" ></i>
-                            <i class="fa fa-star" ></i>
-                            <i class="fa fa-star" ></i>
-                            <i class="fa fa-star-half-o" ></i>
-                            <i class="fa fa-star-o" ></i>
+        <!------------------------------ cart items details------------------------------>
+
+        <div class="small-container cart-page">
+        <table>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+            </tr>
+            <tr>
+                <td>
+                    <div class="cart-info">
+                        <img src="images/buy-1.jpg">
+                        <div>
+                            <p>Red Printed T-Shirt</p>
+                            <small>Price: $50.00</small><br>
+                            <a href="">Remove</a>
                         </div>
-                        <p>₹{{ p.price }}</p>
                     </div>
-                {% endfor %}
-                </div>
+                </td>
+                <td><input type="number" vlaue="1"></td>
+                <td>$50.00</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="cart-info">
+                        <img src="images/buy-2.jpg">
+                        <div>
+                            <p>Red Printed T-Shirt</p>
+                            <small>Price: $50.00</small><br>
+                            <a href="">Remove</a>
+                        </div>
+                    </div>
+                </td>
+                <td><input type="number" vlaue="1"></td>
+                <td>$50.00</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="cart-info">
+                        <img src="images/buy-3.jpg">
+                        <div>
+                            <p>Red Printed T-Shirt</p>
+                            <small>Price: $50.00</small><br>
+                            <a href="">Remove</a>
+                        </div>
+                    </div>
+                </td>
+                <td><input type="number" vlaue="1"></td>
+                <td>$50.00</td>
+            </tr>
+            </table>
             
-            <div class="page-btn">
-                <span>1</span>
-                <span>2</span>
-                <span>3</span>
-                <span>4</span>
-                <span>&#8594;</span>
+            <div class="total-price">
+                <table>
+                    <tr>
+                        <td>Subtotal</td>
+                        <td>$200.00</td>
+                    </tr>
+                    <tr>
+                        <td>Tax</td>
+                        <td>$35.00</td>
+                    </tr>
+                    <tr>
+                        <td>Total</td>
+                        <td>$230.00</td>
+                    </tr>
+                </table>
             </div>
-            
         </div>
         
         
+       
         <!----------------------------------footer------------------------------------->
         <div class ="footer">
             <div class="container">
@@ -122,13 +153,14 @@
                     </div>
     
                 </div>
+    
                 <hr><!--horizontal line-->
-
+    
+            </div>
         </div>
-    </div>
         
         
-        <!-----------------------------------js for toggle menu----------------------------------------------->
+        <!-----------------------------------js for toggle menu-------------------------------------->
         <script>
             var menuItems=document.getElementById("MenuItems");
             
@@ -142,5 +174,6 @@
                 }
             }
         </script>
+     
     </body>
 </html>

@@ -288,7 +288,7 @@ def cart_view(request):
             #for total price shown in cart
             for p in products:
                 total=total+p.price
-    return render(request,'ecom/cart.html',{'products':products,'total':total,'product_count_in_cart':product_count_in_cart})
+    return render(request,'ecom/cart2.html',{'products':products,'total':total,'product_count_in_cart':product_count_in_cart})
 
 
 def remove_from_cart_view(request,pk):
