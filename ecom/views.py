@@ -339,8 +339,8 @@ def send_feedback_view(request):
 #---------------------------------------------------------------------------------
 #------------------------ CUSTOMER RELATED VIEWS START ------------------------------
 #---------------------------------------------------------------------------------
-@login_required(login_url='customerlogin')
-@user_passes_test(is_customer)
+# @login_required(login_url='customerlogin')
+# @user_passes_test(is_customer)
 def customer_home_view(request):
     products=models.Product.objects.all()
     if 'product_ids' in request.COOKIES:
@@ -552,3 +552,7 @@ def contactus_view(request):
             send_mail(str(name)+' || '+str(email),message, settings.EMAIL_HOST_USER, settings.EMAIL_RECEIVING_USER, fail_silently = False)
             return render(request, 'ecom/contactussuccess.html')
     return render(request, 'ecom/contactus.html', {'form':sub})
+
+
+def login_view(request):
+    return render(request,'ecom/accounts.html')
