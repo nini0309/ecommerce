@@ -32,8 +32,13 @@ def products_view(request):
         product_count_in_cart=0
     return render(request,'ecom/products.html',{'products':products,'product_count_in_cart':product_count_in_cart})
 
-def product_desc(request):
-    return render(request, 'ecom/product_desc.html')
+def product_desc(request, pk):
+    product = models.Product.objects.get(id=pk)
+    context = {
+        'product': product
+    }
+
+    return render(request, 'ecom/product_desc.html', context=context)
 
 #for showing login button for admin(by sumit)
 def adminclick_view(request):
