@@ -19,6 +19,9 @@ def home_view(request):
         return HttpResponseRedirect('afterlogin')
     return render(request,'ecom/index.html',{'products':products,'product_count_in_cart':product_count_in_cart})
 
+def aboutus_view(request):
+    return render(request,'ecom/aboutus.html')
+
 def products_view(request):
     products=models.Product.objects.all()
     if 'product_ids' in request.COOKIES:
