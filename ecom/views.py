@@ -254,7 +254,7 @@ def add_to_cart_view(request,pk):
     else:
         product_count_in_cart=1
 
-    response = render(request, 'ecom/index.html',{'products':products,'product_count_in_cart':product_count_in_cart})
+    response = render(request, 'ecom/products.html',{'products':products,'product_count_in_cart':product_count_in_cart})
 
     #adding product id to cookies
     if 'product_ids' in request.COOKIES:
@@ -327,7 +327,7 @@ def remove_from_cart_view(request,pk):
                 value=value+product_id_in_cart[0]
             else:
                 value=value+"|"+product_id_in_cart[i]
-        response = render(request, 'ecom/cart.html',{'products':products,'total':total,'product_count_in_cart':product_count_in_cart})
+        response = render(request, 'ecom/cart2.html',{'products':products,'total':total,'product_count_in_cart':product_count_in_cart})
         if value=="":
             response.delete_cookie('product_ids')
         response.set_cookie('product_ids',value)

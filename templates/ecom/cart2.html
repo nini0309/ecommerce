@@ -49,69 +49,44 @@
         <table>
             <tr>
                 <th>Product</th>
-                <th>Quantity</th>
+                {% comment %} <th>Quantity</th> {% endcomment %}
                 <th>Subtotal</th>
             </tr>
+            {% for p in products %}
             <tr>
                 <td>
                     <div class="cart-info">
-                        <img src="images/buy-1.jpg">
+                        <img src="{% static p.product_image.url %}">
                         <div>
-                            <p>Red Printed T-Shirt</p>
-                            <small>Price: $50.00</small><br>
-                            <a href="">Remove</a>
+                            <p>{{p.name}}</p>
+                            <small>₹{{p.price}}</small><br>
+                            <a href="{% url 'remove-from-cart' p.id  %}">Remove</a>
                         </div>
                     </div>
                 </td>
-                <td><input type="number" vlaue="1"></td>
-                <td>$50.00</td>
+                {% comment %} <td><input type="number" vlaue="1"></td> {% endcomment %}
+                <td>₹{{p.price}}</td>
             </tr>
-            <tr>
-                <td>
-                    <div class="cart-info">
-                        <img src="images/buy-2.jpg">
-                        <div>
-                            <p>Red Printed T-Shirt</p>
-                            <small>Price: $50.00</small><br>
-                            <a href="">Remove</a>
-                        </div>
-                    </div>
-                </td>
-                <td><input type="number" vlaue="1"></td>
-                <td>$50.00</td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="cart-info">
-                        <img src="images/buy-3.jpg">
-                        <div>
-                            <p>Red Printed T-Shirt</p>
-                            <small>Price: $50.00</small><br>
-                            <a href="">Remove</a>
-                        </div>
-                    </div>
-                </td>
-                <td><input type="number" vlaue="1"></td>
-                <td>$50.00</td>
-            </tr>
+            {% endfor %}
             </table>
             
             <div class="total-price">
                 <table>
-                    <tr>
+                    {% comment %} <tr>
                         <td>Subtotal</td>
                         <td>$200.00</td>
                     </tr>
                     <tr>
                         <td>Tax</td>
                         <td>$35.00</td>
-                    </tr>
+                    </tr> {% endcomment %}
                     <tr>
                         <td>Total</td>
-                        <td>$230.00</td>
+                        <td>₹{{ total }}</td>
                     </tr>
                 </table>
             </div>
+            <a href="/customer-address" class="btn">Buy Now</a>
         </div>
         
         
