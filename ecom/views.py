@@ -2,10 +2,48 @@ from django.shortcuts import render,redirect,reverse
 from . import forms,models
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.mail import send_mail
+import razorpay
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib import messages
 from django.conf import settings
+from .forms import CreateUserForm
+from django.contrib.auth import authenticate, login, logout
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponseBadRequest
+ 
+ 
+razorpay_client = razorpay.Client(
+    auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
+
+
+def login_page(request):
+    # if request.user.is_authenticated:
+    #     return redirect('Home')
+    if request.method == 'POST' and request.POST.get("form_type") == 'LoginForm':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return redirect('/')
+        else:
+            messages.info(request, 'Username or Password Incorrect')
+
+    if request.method == 'POST' and request.POST.get("form_type") == 'RegForm':
+            form = CreateUserForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Account created')
+                return redirect('accounts')
+    else:
+        form = CreateUserForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'ecom/accounts.html', context)
 
 def home_view(request):
     products=models.Product.objects.all()
@@ -212,12 +250,6 @@ def update_order_view(request,pk):
     return render(request,'ecom/update_order.html',{'orderForm':orderForm})
 
 
-# admin view the feedback
-@login_required(login_url='adminlogin')
-def view_feedback_view(request):
-    feedbacks=models.Feedback.objects.all().order_by('-id')
-    return render(request,'ecom/view_feedback.html',{'feedbacks':feedbacks})
-
 
 
 #---------------------------------------------------------------------------------
@@ -372,14 +404,71 @@ def customer_address_view(request):
             products=models.Product.objects.all().filter(id__in = product_id_in_cart)
             for p in products:
                 total=total+p.price
-    return render(request, 'ecom/payment.html',{'total':total})
 
+    razorpay_order = razorpay_client.order.create(dict(amount=total,currency='INR',payment_capture='0'))
+ 
+    # order id of newly created order.
+    RAZOR_KEY_ID='rzp_test_R38bclUN3Fc5nC'
+    razorpay_order_id = razorpay_order['id']
+    callback_url = 'paymenthandler/'
+    context = {}
+    context['razorpay_order_id'] = razorpay_order_id
+    context['razorpay_merchant_key'] = settings.RAZOR_KEY_ID
+    context['razorpay_amount'] = total
+    context['currency'] = 'INR'
+    context['callback_url'] = callback_url
+    context['total'] = total
+    return render(request, 'ecom/payment.html',context)
 
+@csrf_exempt
+def paymenthandler(request):
+ 
+    # only accept POST request.
+    if request.method == "POST":
+        try:
+           
+            # get the required parameters from post request.
+            payment_id = request.POST.get('razorpay_payment_id', '')
+            razorpay_order_id = request.POST.get('razorpay_order_id', '')
+            signature = request.POST.get('razorpay_signature', '')
+            params_dict = {
+                'razorpay_order_id': razorpay_order_id,
+                'razorpay_payment_id': payment_id,
+                'razorpay_signature': signature,
+            }
+ 
+            # verify the payment signature.
+            result = razorpay_client.utility.verify_payment_signature(
+                params_dict)
+            if result is not None:
+                amount = 20000  # Rs. 200
+                try:
+ 
+                    # capture the payemt
+                    razorpay_client.payment.capture(payment_id, amount)
+ 
+                    # render success page on successful caputre of payment
+                    return render(request, 'payment_success.html')
+                except:
+ 
+                    # if there is an error while capturing payment.
+                    return render(request, 'paymentfail.html')
+            else:
+ 
+                # if signature verification fails.
+                return render(request, 'paymentfail.html')
+        except:
+ 
+            # if we don't find the required parameters in POST data
+            return HttpResponseBadRequest()
+    else:
+       # if other than POST request is made.
+        return HttpResponseBadRequest()
 
 
 # here we are just directing to this view...actually we have to check whther payment is successful or not
 #then only this view should be accessed
-@login_required(login_url='customerlogin')
+@login_required(login_url='accounts')
 def payment_success_view(request):
     # Here we will place order | after successful payment
     # we will fetch customer  mobile, address, Email
@@ -436,53 +525,6 @@ def my_order_view(request):
     return render(request,'ecom/my_order.html',{'data':zip(ordered_products,orders)})
 
 
-
-
-#--------------for discharge patient bill (pdf) download and printing
-import io
-# from xhtml2pdf import pisa
-from django.template.loader import get_template
-from django.template import Context
-from django.http import HttpResponse
-
-
-# def render_to_pdf(template_src, context_dict):
-#     template = get_template(template_src)
-#     html  = template.render(context_dict)
-#     result = io.BytesIO()
-#     pdf = pisa.pisaDocument(io.BytesIO(html.encode("ISO-8859-1")), result)
-#     if not pdf.err:
-#         return HttpResponse(result.getvalue(), content_type='application/pdf')
-#     return
-
-@login_required(login_url='customerlogin')
-@user_passes_test(is_customer)
-def download_invoice_view(request,orderID,productID):
-    order=models.Orders.objects.get(id=orderID)
-    product=models.Product.objects.get(id=productID)
-    mydict={
-        'orderDate':order.order_date,
-        'customerName':request.user,
-        'customerEmail':order.email,
-        'customerMobile':order.mobile,
-        'shipmentAddress':order.address,
-        'orderStatus':order.status,
-
-        'productName':product.name,
-        'productImage':product.product_image,
-        'productPrice':product.price,
-        'productDescription':product.description,
-
-
-    }
-    return
-    # return render_to_pdf('ecom/download_invoice.html',mydict)
-
-
-
-
-
-
 @login_required(login_url='customerlogin')
 @user_passes_test(is_customer)
 def my_profile_view(request):
@@ -510,25 +552,3 @@ def edit_profile_view(request):
     return render(request,'ecom/edit_profile.html',context=mydict)
 
 
-
-#---------------------------------------------------------------------------------
-#------------------------ ABOUT US AND CONTACT US VIEWS START --------------------
-#---------------------------------------------------------------------------------
-def aboutus_view(request):
-    return render(request,'ecom/aboutus.html')
-
-def contactus_view(request):
-    sub = forms.ContactusForm()
-    if request.method == 'POST':
-        sub = forms.ContactusForm(request.POST)
-        if sub.is_valid():
-            email = sub.cleaned_data['Email']
-            name=sub.cleaned_data['Name']
-            message = sub.cleaned_data['Message']
-            send_mail(str(name)+' || '+str(email),message, settings.EMAIL_HOST_USER, settings.EMAIL_RECEIVING_USER, fail_silently = False)
-            return render(request, 'ecom/contactussuccess.html')
-    return render(request, 'ecom/contactus.html', {'form':sub})
-
-
-def login_view(request):
-    return render(request,'ecom/accounts.html')

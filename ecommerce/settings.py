@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+RAZOR_KEY_ID = 'rzp_test_svltJ0ARsmzxdg'
+RAZOR_KEY_SECRET = "Wv20IFoI1lCz5MBVNwCfj9ut"
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
@@ -41,6 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'ecom',
     'widget_tweaks',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 
 ]
 
@@ -54,6 +62,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
 ]
+
+SOCIALACCOUNT_LOGIN_ON_GET=True
 
 ROOT_URLCONF = 'ecommerce.urls'
 
@@ -146,3 +156,38 @@ EMAIL_HOST_PASSWORD = 'xyz' # host email password required
 # otherwise you will get SMTPAuthenticationError at /contactus
 # this process is required because google blocks apps authentication by default
 EMAIL_RECEIVING_USER = ['to@gmail.com'] # email on which you will receive messages sent from website
+
+
+SITE_ID=1
+
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http' 
+
+ACCOUNT_ADAPTER = 'allauth.account.adapter.DefaultAccountAdapter'
+
+ACCOUNT_SOCIALACCOUNT_ADAPTER = 'allauth.socialaccount.adapter.DefaultSocialAccountAdapter'
+
+
+
+
+SOCIALACCOUNT_PROVIDERS = {
+
+'google': {
+
+'SCOPE': ['profile', 'email'],
+
+'AUTH_PARAMS': {'access_type': 'online'},
+
+'APP': {
+
+'client_id': '322892660179-6b40hus9u143mddqhju985d1qnkj6aqa.apps.googleusercontent.com',
+
+'secret': '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',
+
+'key': '',
+
+},
+
+},
+
+}
+
