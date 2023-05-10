@@ -12,8 +12,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
-RAZOR_KEY_ID = 'rzp_test_svltJ0ARsmzxdg'
-RAZOR_KEY_SECRET = "Wv20IFoI1lCz5MBVNwCfj9ut"
+RAZOR_KEY_ID = '' #add id here
+RAZOR_KEY_SECRET = "" #add secret here
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -181,7 +181,7 @@ SOCIALACCOUNT_PROVIDERS = {
 
 'client_id': '322892660179-6b40hus9u143mddqhju985d1qnkj6aqa.apps.googleusercontent.com',
 
-'secret': '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',
+'secret': '', #add secret here
 
 'key': '',
 

@@ -408,7 +408,7 @@ def customer_address_view(request):
     razorpay_order = razorpay_client.order.create(dict(amount=total,currency='INR',payment_capture='0'))
  
     # order id of newly created order.
-    RAZOR_KEY_ID='rzp_test_R38bclUN3Fc5nC'
+    RAZOR_KEY_ID='' #add key here
     razorpay_order_id = razorpay_order['id']
     callback_url = 'paymenthandler/'
     context = {}
